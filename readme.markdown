@@ -10,6 +10,7 @@ Author:  Lyall Jonathan Di Trapani
 8 x 8 pixel tiles
 256 tile index
 Tile index is used for both background cells and sprites
+Colors are 16-bits with (5:6:5) RGB color format
 ```
 
 
@@ -36,11 +37,11 @@ Single tile        8    Words   8 X 8 tile times 2 bits
                                 (16 bits per word)
 Tile index      2048    Words   256 tiles X 8 words
 Each tile cell     1    Word    8 bit tile select +
-        4 bit foreground color pair + 4 bit background color pair
-Number of cells 2400    60 X 40
+                                4 bit foreground color pair +
+                                4 bit background color pair
+Number of cells 2400            60 X 40 grid cells
 cell x y flip    300    Words   2 bit X 2,400 / 16
 Sprites          256    attribute data for 128 sprites
-Colors are 16-bit
 32 tile colors    32    Words
 32 sprite colors  32    words
 
