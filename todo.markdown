@@ -1,3 +1,4 @@
+- Convert all 64 colors from 16 to 24-bits a-priori
 - Video.update returns new imageData to computer.
   Does not manipulate the canvas context directly.
   The ljd computer will handle the
