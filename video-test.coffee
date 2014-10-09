@@ -8,45 +8,30 @@ LJD 16-bit Computer Video Sub-system
 if (typeof ljd).toString() == 'undefined'
   window.ljd = {}
 
-# offset = 0xDB00 # 55,296
-
-class Video
-
-  constructor: (@ram, @offset, @context, @zoom) ->
-    @x = 0
-
-  update: ->
-    switch @x
-      when 0
-        @context.fillStyle = "#990000"
-        @x = 1
-      when 1
-        @context.fillStyle = "#009900"
-        @x = 2
-      when 2
-        @context.fillStyle = "#000099"
-        @x = 0
-    @context.fillRect(10, 10, 90, 90)
-
+setPixel = (x, y, r, g, b) ->
+  index = (x + y * imageData.width) * 4
+  data[index + 0] = r
+  data[index + 1] = g
+  data[index + 2] = b
+  data[index + 3] = 255 
 
 e = ljd.$("test")
 e.innerHTML = "new"
 
 c = ljd.$("screen")
+c.style.height = '640px'
 
 ctx = c.getContext("2d")
-ctx.fillStyle = "#222222"
-ctx.fillRect(0, 0, 960, 640)
-ctx.fillStyle = "#AAAAAA"
-ctx.fillRect(0, 0, 480, 320)
-ctx.fillStyle = "#333333"
-ctx.fillRect(110, 10, 90, 90)
+# ctx.fillStyle = "#AAAAAA"
+# ctx.fillRect(0, 0, 480, 320)
 
-v = new Video(1, 1, ctx)
+v = new ljd.Video([], ctx, 4)
 
-draw = ->
-  window.setTimeout(draw, 500)
-  v.update()
+imageData = v.imageData
+data = imageData.data
 
-window.setTimeout(draw, 500)
-
+setPixel(1, 1, 255, 0, 0)
+for x in [5..10]
+  for y in [5..10]
+    setPixel(x, y, 255, 0, 0)
+ctx.putImageData(imageData, 0, 0)
