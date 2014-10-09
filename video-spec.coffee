@@ -10,27 +10,57 @@ LJD 16-bit Computer Video Sub-system
 tileNumbers = (0 for _ in [0...64])
 
 
+class MockCanvasContext
+
+  constructor: (@imageData) ->
+
+  createImageData: (width, height) ->
+    @imageData
+
+  putImageData: (imageData, x, y) ->
+
+
 module 'Video',
   setup: ->
-    @newScreen4x = ljd.Video.newScreen4x
-    numElements = 480 * 320 * 4 * 4
-    @offset = 10
-    @ram = (0 for _ in [0...(1024 * 5 * @offset)])
+    @ram = (0 for _ in [0...(Math.pow(2, 16))])
+
+    # Tile pixels:
     # first 4 pixels = [0, 1, 2, 3]
     # As a byte in base 2:  %00011011
     # As a byte in hex: 0x1B
     first8pixels = 0x1B << 8
-    addressOf3rdTile = @offset + (8 * 2)
+    addressOf3rdTile = Video.TILE_INDEX + (Video.TILE_INDEX_STEP * 2)
     @ram[addressOf3rdTile] = first8pixels
-    addressOf2ndCell = @offset + 2048 + 1
-    # grid cell:  8-bit tile index; 4-bit color pair1; 4-bit color pair2
-    @ram[addressOf2ndCell] = (2 << 8) | (0 + (
-    @data = (0 for _ in [0...numElements])
 
+    TILE_COLORS = Video.TILE_COLORS
+    @ram[TILE_COLORS...(TILE_COLORS + 4)] = [
+      parseInt('00000' + '000000' + '00000', 2) # Black
+      parseInt('11111' + '000000' + '00000', 2) # Red
+      parseInt('00000' + '111111' + '00000', 2) # Green
+      parseInt('00000' + '000000' + '11111', 2) # Blue
+    ]
+    SPRITE_COLORS = Video.SPRITE_COLORS
+    @ram[SPRITE_COLORS...(SPRITE_COLORS + 4)] = [
+      parseInt('11111' + '111111' + '11111', 2) # White
+      parseInt('00000' + '100000' + '10000', 2) # Cyan
+      parseInt('10101' + '101011' + '00000', 2) # Yellow
+      parseInt('10000' + '000000' + '10000', 2) # Magenta
+    ]
+
+    addressOf2ndCell = Video.GRID_CELLS + 1
+    # grid cell:  8-bit tile index; 4-bit color pair1; 4-bit color pair2
+    @ram[addressOf2ndCell] = parseInt('00000010' + '0001' + '0000', 2)
+    numElements = 480 * 320 * 4 * 4
+    @data = (0 for _ in [0...numElements])
+    context = new MockCanvasContext({data: data})
+    video = new Video(@ram, context, 4)
+
+test '16-bit to 24-bit color conversion', ->
+  Video.get24bitColors(@ram)
 
 # ? R G B #
 test 'background', ->
-  @newScreen4x(@offset, @ram, @data)
+  video.newScreen4x()
   expectedColors = [
     #R     G     B     A
     0x00, 0x00, 0x00, 0xFF
@@ -64,7 +94,7 @@ test 'background', ->
 # Yello comes from sprite
 ###
 test 'sprite', ->
-  @newScreen4x(@offset, @ram, @data)
+  video.newScreen4x()
   expectedColors = [
     #R     G     B     A
     0xFF, 0x00, 0x00, 0xFF
