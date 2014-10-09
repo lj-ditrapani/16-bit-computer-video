@@ -57,12 +57,31 @@ Sprites
 ```
 128 sprites
 2 words per sprite
-256 words
-Sprite data
-position    color pairs    Mirrors    Tile  |  Total
-x    y      1    2         x   y            |
-6    6      4    4         1   1      8     |  30
-30 bits < 2 words
+256 words of sprite data
+
+
+Sprite data:
+
+                    # of bits
+------------------------------------
+Tile index          8
+Color pair 1 (cp1)  4
+Color pair 2 (cp2)  4
+Mirror flip x (X)   1
+Mirror flip y (Y)   1
+x position          6
+Unused (U)          2
+y position          6
+------------------------------------
+Total              32 bits = 2 words
+
+
+Layout of a sprite accross 2 RAM cells:
+
+ F E D C B A 9 8 7 6 5 4 3 2 1 0       F E D C B A 9 8 7 6 5 4 3 2 1 0
+---------------------------------     ---------------------------------
+|   Tile Index  |  cp1  |  cp2  |     |X|Y| xposition |U|U| yposition |
+---------------------------------     ---------------------------------
 ```
 
 
