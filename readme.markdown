@@ -21,14 +21,14 @@ Video Ram
 ```
 5,068 Words (< 10 KB)
 
-                words
----------------------
-Tile index      2,048
-Grid cells      2,400
-Cell x y flip     300
-Sprites           256
-Tile colors        32
-Sprite colors      32
+                words   address range
+-------------------------------------
+Tile index      2,048   $EC00-$F3FF
+Grid cells      2,400   $F400-$F59D
+Cell x y flip     300   $FD60-$FE8B
+Sprites           256   $FE8C-$FF8B
+Tile colors        32   $FF8C-$FFAB
+Sprite colors      32   $FFAC-$FFCB
 ---------------------
 Total           5,068
 
