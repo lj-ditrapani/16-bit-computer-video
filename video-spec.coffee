@@ -23,7 +23,8 @@ module 'Video',
     addressOf3rdTile = @offset + (8 * 2)
     @ram[addressOf3rdTile] = first8pixels
     addressOf2ndCell = @offset + 2048 + 1
-    @ram[addressOf2ndCell] = 
+    # grid cell:  8-bit tile index; 4-bit color pair1; 4-bit color pair2
+    @ram[addressOf2ndCell] = (2 << 8) | (0 + (
     @data = (0 for _ in [0...numElements])
 
 
@@ -41,9 +42,8 @@ test 'background', ->
     0x00, 0x00, 0xFF, 0xFF
     0x00, 0x00, 0xFF, 0xFF
   ]
-  # pixels 1-3 of second cell in first row
+  # first 4 pixels (0-3) of second cell in first row
   deepEqual @data[64..95], expectedColors
-  ok false, @data[64..95].length/8
 
 
 ###
