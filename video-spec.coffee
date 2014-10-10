@@ -4,10 +4,78 @@ LJD 16-bit Computer Video Sub-system
 ---------|---------|---------|---------|---------|---------|---------|--
 ###
 
+module 'Tile',
+  setup: ->
+    ramTile = [
+      parseInt '00011011' + '11100100', 2
+      parseInt '11111111' + '11111111', 2
+      parseInt '00000000' + '11111111', 2
+      parseInt '01010101' + '11111111', 2
+      parseInt '00000000' + '10101010', 2
+      parseInt '00000000' + '00000000', 2
+      parseInt '00000000' + '00000000', 2
+      parseInt '11100100' + '00011011', 2
+    ]
+    @array = [
+      [0, 1, 2, 3, 3, 2, 1, 0]
+      [3, 3, 3, 3, 3, 3, 3, 3]
+      [0, 0, 0, 0, 3, 3, 3, 3]
+      [1, 1, 1, 1, 3, 3, 3, 3]
+      [0, 0, 0, 0, 2, 2, 2, 2]
+      [0, 0, 0, 0, 0, 0, 0, 0]
+      [0, 0, 0, 0, 0, 0, 0, 0]
+      [3, 2, 1, 0, 0, 1, 2, 3]
+    ]
+    @tile = new ljd.Video.Tile(ramTile)
 
-# offset = 0xDB00 # 55,296
+test 'construction', ->
+  deepEqual @tile.array, @array
 
-tileNumbers = (0 for _ in [0...64])
+test 'flip about NO axies', ->
+  actualArray = @tile.flip(false, false)
+  deepEqual actualArray, @array
+
+test 'flip about X axis', ->
+  expectedArray = [
+    [3, 2, 1, 0, 0, 1, 2, 3]
+    [0, 0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 2, 2, 2, 2]
+    [1, 1, 1, 1, 3, 3, 3, 3]
+    [0, 0, 0, 0, 3, 3, 3, 3]
+    [3, 3, 3, 3, 3, 3, 3, 3]
+    [0, 1, 2, 3, 3, 2, 1, 0]
+  ]
+  actualArray = @tile.flip(true, false)
+  deepEqual actualArray, expectedArray
+
+test 'flip about Y axis', ->
+  expectedArray = [
+    [0, 1, 2, 3, 3, 2, 1, 0]
+    [3, 3, 3, 3, 3, 3, 3, 3]
+    [3, 3, 3, 3, 0, 0, 0, 0]
+    [3, 3, 3, 3, 1, 1, 1, 1]
+    [2, 2, 2, 2, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0]
+    [3, 2, 1, 0, 0, 1, 2, 3]
+  ]
+  actualArray = @tile.flip(false, true)
+  deepEqual actualArray, expectedArray
+
+test 'flip about X and Y axies', ->
+  expectedArray = [
+    [3, 2, 1, 0, 0, 1, 2, 3]
+    [0, 0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0]
+    [2, 2, 2, 2, 0, 0, 0, 0]
+    [3, 3, 3, 3, 1, 1, 1, 1]
+    [3, 3, 3, 3, 0, 0, 0, 0]
+    [3, 3, 3, 3, 3, 3, 3, 3]
+    [0, 1, 2, 3, 3, 2, 1, 0]
+  ]
+  actualArray = @tile.flip(true, true)
+  deepEqual actualArray, expectedArray
 
 
 class MockCanvasContext
@@ -56,7 +124,7 @@ module 'Video',
     context = new MockCanvasContext({data: @data})
     @video = new Video(@ram, context, 4)
 
-test 'Singel 16-bit color to 24-bit color conversion', ->
+test 'Single 16-bit color to 24-bit color conversion', ->
   inputs = [
     parseInt('00000' + '000000' + '00000', 2) # Black
     parseInt('11111' + '000000' + '00000', 2) # Red
