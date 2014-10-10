@@ -13,7 +13,7 @@ setPixel = (x, y, r, g, b) ->
   data[index + 0] = r
   data[index + 1] = g
   data[index + 2] = b
-  data[index + 3] = 255 
+  data[index + 3] = 255
 
 e = ljd.$("test")
 e.innerHTML = "new"

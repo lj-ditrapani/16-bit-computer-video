@@ -217,7 +217,7 @@ test 'sprite', ->
     0xAD, 0xAE, 0x00, 0xFF
     0xAD, 0xAE, 0x00, 0xFF
   ]
-  deepEqual @data[8..31], expectedColors 
+  deepEqual @data[8..31], expectedColors
   ok false, @data[8..31].length/8
   @ram[5..8] = [1, 2, 3, 4]
   ok false, @ram[5..9]
