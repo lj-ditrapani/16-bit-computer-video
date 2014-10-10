@@ -7,8 +7,6 @@ Create convenient data structures from video RAM
   - List of tiles
   - tile & sprite grid cells -> 60 x 40 matrix of Cells
   - List of sprites
-Create sprite grid map (like grid cell data structure,
-but false means no sprite)
 For each row in grid
   for each cell in grid
     Convert cell (word) -> [index, cp1, cp2]
@@ -25,11 +23,6 @@ For each row in grid
       get 4 24-bit sprite colors
     Write all 64 pixels (8x8) for cell into imagePixelData
 
-Tile
-  8 rows of 8 2-bit (0-3) values
-  flip(X, Y) -> return new tile with proper flipping
-                or same tile if (x, y) = (0, 0)
-
 Cell (same for both Tile and Sprite)
   tile index
   cp1
@@ -40,10 +33,6 @@ Cell (same for both Tile and Sprite)
 
 Grid
   60x40 Cells
-
-Color pairs
-  16 pairs of 24-bit colors
-
 ###
 
 
@@ -54,10 +43,10 @@ if (typeof ljd).toString() == 'undefined'
 class Tile
   
   constructor: (ramTile) ->
-    @array = []
-    for word in ramTile
-      @array.push Tile.word2row(word)
+    # 8 rows of 8 2-bit (0-3) values
+    @array = ramTile.map(Tile.word2row)
 
+  # return a properly flipped array
   flip: (n) ->
     switch n
       when 0 then @array
@@ -79,6 +68,7 @@ Tile.flipX = (array) ->
 Tile.flipY = (array) ->
   array.map((row) -> row.reverse())
 
+
 class Video
 
   constructor: (@ram, @context, @zoom) ->
@@ -86,8 +76,6 @@ class Video
     @imageData = @context.createImageData(480, 320)
     @tiles = []
     @grid = []
-    @tileColorPairs = []
-    @spriteColorPairs = []
 
   update: ->
     newScreen4x @offset, @ram, @imageData.data
@@ -97,7 +85,7 @@ class Video
     # amount is either 1 or 4
 
   # returns two arrays of 16 color pairs
-  # They are the 24-bit versions of the 16-bit tile color pairs and 
+  # They are the 24-bit versions of the 16-bit tile color pairs and
   # sprite color pairs in video RAM.
   make24bitColors: () ->
     [@tileColorPairs, @spriteColorPairs] = [[], []]
