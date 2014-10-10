@@ -56,6 +56,10 @@ class Video
   constructor: (@ram, @context, @zoom) ->
     @context.imageSmoothingEnabled = false
     @imageData = @context.createImageData(480, 320)
+    @tiles = []
+    @grid = []
+    @tileColorPairs = []
+    @spriteColorPairs = []
 
   update: ->
     newScreen4x @offset, @ram, @imageData.data
@@ -67,11 +71,32 @@ class Video
   # returns two arrays of 16 color pairs
   # They are the 24-bit versions of the 16-bit tile color pairs and 
   # sprite color pairs in video RAM.
-  get24bitColors: () ->
+  make24bitColors: () ->
+    [@tileColorPairs, @spriteColorPairs] = [[], []]
+    @_make24bitColors 'tile'
+    @_make24bitColors 'sprite'
+
+  _make24bitColors: (colorSet) ->
+    [address, array] = {
+      tile: [Video.TILE_COLORS, @tileColorPairs]
+      sprite: [Video.SPRITE_COLORS, @spriteColorPairs]
+    }[colorSet]
+    for i in [0...16]
+      c16a = @ram[i * 2]
+      c16b = @ram[i * 2 + 1]
+      array.push([Video.to24bitColor(c16a), Video.to24bitColor(c16b)])
 
   # Modifies data to produce the new screen data (for 4x zoom)
   newScreen4x: () ->
 
+Video.to24bitColor = (color) ->
+  r16 = color >> 11
+  g16 = (color >> 5) & 0x3F  # 11_1111
+  b16 = color & 0x1F         #  1_1111
+  r24 = (r16 << 3) | (r16 >> 2)
+  g24 = (g16 << 2) | (g16 >> 4)
+  b24 = (b16 << 3) | (b16 >> 2)
+  [r24, g24, b24]
 
 # RAM addresses for beginning of each video segment
 Video.TILE_INDEX = 0xEC00
