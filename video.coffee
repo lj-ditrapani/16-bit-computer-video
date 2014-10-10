@@ -82,8 +82,8 @@ class Video
       sprite: [Video.SPRITE_COLORS, @spriteColorPairs]
     }[colorSet]
     for i in [0...16]
-      c16a = @ram[i * 2]
-      c16b = @ram[i * 2 + 1]
+      c16a = @ram[address + i * 2]
+      c16b = @ram[address + i * 2 + 1]
       array.push([Video.to24bitColor(c16a), Video.to24bitColor(c16b)])
 
   # Modifies data to produce the new screen data (for 4x zoom)
