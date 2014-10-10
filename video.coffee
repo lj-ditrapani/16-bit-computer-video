@@ -23,14 +23,6 @@ For each row in grid
       get 4 24-bit sprite colors
     Write all 64 pixels (8x8) for cell into imagePixelData
 
-Cell (same for both Tile and Sprite)
-  tile index
-  cp1
-  cp2
-  X flip
-  Y flip
-  sprite:  false | sprite Cell
-
 Grid
   60x40 Cells
 ###
@@ -69,6 +61,32 @@ Tile.flipY = (array) ->
   array.map((row) -> row.reverse())
 
 
+###
+Cell (same for both Tile and Sprite)
+  constructor(ramCell)
+  tile index: 0-255
+  cp1: 0-15
+  cp2: 0-15
+  sprite:  false | sprite Cell
+  XYflip: 0-3
+  ----------------------------
+  tile: Tile
+  colors: 4-element array
+  ----------------------------
+  setTile(@tiles)
+  setColors(@tileColors or @spriteColors)
+  setXYflip(2-bit XY flip)
+  setSprite(spriteCell)
+###
+class Cell
+
+  constructor: (ramCell) ->
+    @tileIndex = ramCell >> 8
+    @colorPair1 = (ramCell >> 4) & 0xF
+    @colorPair2 = ramCell & 0xF
+    @sprite = false
+
+
 class Video
 
   constructor: (@ram, @context, @zoom) ->
@@ -78,13 +96,32 @@ class Video
     @grid = []
 
   update: ->
-    newScreen4x @offset, @ram, @imageData.data
+    @updateData()
+    @updateScreen()
     @context.putImageData(@imageData, 0, 0)
+
+  # Update data structures with contents of RAM
+  updateData: ->
+    @make24bitColors()
+    @makeTiles()
+    @makeGrid()
+
+    @makeSprites()
+    @setSpriteColors()
+    @setSpriteTiles()
+
+    @setGridXYvalues()
+    @setGridSprites()
+    @setGridColors()
+    @setGridTiles()
+
+  # Update imageData based on new in data structures
+  updateScreen: ->
 
   zoom: (amount) ->
     # amount is either 1 or 4
 
-  # returns two arrays of 16 color pairs
+  # Creates two arrays of 16 color pairs
   # They are the 24-bit versions of the 16-bit tile color pairs and
   # sprite color pairs in video RAM.
   make24bitColors: () ->
@@ -102,8 +139,12 @@ class Video
       c16b = @ram[address + i * 2 + 1]
       array.push([Video.to24bitColor(c16a), Video.to24bitColor(c16b)])
 
-  # Modifies data to produce the new screen data (for 4x zoom)
-  newScreen4x: () ->
+  makeTiles: ->
+    @tiles = []
+    for i in [0..255]
+      startAddress = Video.TILE_INDEX + (i * 8)
+      ramTile = @ram[startAddress...(startAddress + 8)]
+      @tiles.push(new Tile(ramTile))
 
 Video.to24bitColor = (color) ->
   r16 = color >> 11
@@ -127,4 +168,5 @@ Video.GRID_CELL_STEP = 1    # 1 word per cell
 Video.SPRITE_STEP = 2       # 2 words per sprite data
 
 Video.Tile = Tile
+Video.Cell = Cell
 ljd.Video = Video
