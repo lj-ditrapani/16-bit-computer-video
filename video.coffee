@@ -51,6 +51,45 @@ if (typeof ljd).toString() == 'undefined'
   window.ljd = {}
 
 
+class Tile
+  
+  constructor: (ramTile) ->
+    @array = []
+    for word in ramTile
+      @array.push Tile.word2row(word)
+
+  flip: (x, y) ->
+    array = if x is true
+      Tile.flipX(@array)
+    else
+      @array
+    if y is true
+      Tile.flipY(array)
+    else
+      array
+
+Tile.word2row = (word) ->
+  row = []
+  for i in [0...8]
+    row.unshift(word & 3)
+    word = word >> 2
+  row
+
+Tile.flipX = (array) ->
+  newArray = []
+  for row in array
+    newArray.unshift row
+  newArray
+
+Tile.flipY = (array) ->
+  newArray = []
+  for row in array
+    newRow = []
+    for pixel in row
+      newRow.unshift pixel
+    newArray.push newRow
+  newArray
+
 class Video
 
   constructor: (@ram, @context, @zoom) ->
@@ -110,4 +149,5 @@ Video.TILE_INDEX_STEP = 8   # 8 words per tile
 Video.GRID_CELL_STEP = 1    # 1 word per cell
 Video.SPRITE_STEP = 2       # 2 words per sprite data
 
+Video.Tile = Tile
 ljd.Video = Video
