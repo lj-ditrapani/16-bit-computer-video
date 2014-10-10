@@ -58,15 +58,13 @@ class Tile
     for word in ramTile
       @array.push Tile.word2row(word)
 
-  flip: (x, y) ->
-    array = if x is true
-      Tile.flipX(@array)
-    else
-      @array
-    if y is true
-      Tile.flipY(array)
-    else
-      array
+  flip: (n) ->
+    switch n
+      when 0 then @array
+      when 1 then Tile.flipY @array
+      when 2 then Tile.flipX @array
+      when 3 then Tile.flipY Tile.flipX(@array)
+      else throw Error("n=#{n}; n must be between 0 and 3 inclusive")
 
 Tile.word2row = (word) ->
   row = []
@@ -76,19 +74,10 @@ Tile.word2row = (word) ->
   row
 
 Tile.flipX = (array) ->
-  newArray = []
-  for row in array
-    newArray.unshift row
-  newArray
+  array.reverse()
 
 Tile.flipY = (array) ->
-  newArray = []
-  for row in array
-    newRow = []
-    for pixel in row
-      newRow.unshift pixel
-    newArray.push newRow
-  newArray
+  array.map((row) -> row.reverse())
 
 class Video
 
