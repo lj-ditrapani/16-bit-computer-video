@@ -32,7 +32,7 @@ test 'construction', ->
   deepEqual @tile.array, @array
 
 test 'flip about NO axies', ->
-  actualArray = @tile.flip(false, false)
+  actualArray = @tile.flip(0) # %00 base 2
   deepEqual actualArray, @array
 
 test 'flip about X axis', ->
@@ -46,7 +46,7 @@ test 'flip about X axis', ->
     [3, 3, 3, 3, 3, 3, 3, 3]
     [0, 1, 2, 3, 3, 2, 1, 0]
   ]
-  actualArray = @tile.flip(true, false)
+  actualArray = @tile.flip(2) # %10 base 2
   deepEqual actualArray, expectedArray
 
 test 'flip about Y axis', ->
@@ -60,7 +60,7 @@ test 'flip about Y axis', ->
     [0, 0, 0, 0, 0, 0, 0, 0]
     [3, 2, 1, 0, 0, 1, 2, 3]
   ]
-  actualArray = @tile.flip(false, true)
+  actualArray = @tile.flip(1) # %01 base 2
   deepEqual actualArray, expectedArray
 
 test 'flip about X and Y axies', ->
@@ -74,8 +74,11 @@ test 'flip about X and Y axies', ->
     [3, 3, 3, 3, 3, 3, 3, 3]
     [0, 1, 2, 3, 3, 2, 1, 0]
   ]
-  actualArray = @tile.flip(true, true)
+  actualArray = @tile.flip(3) # %11 base 2
   deepEqual actualArray, expectedArray
+
+test 'Bad input', ->
+  throws (-> @tile.flip(4)), /n=4; n must be between 0 and 3 inclusive/
 
 
 class MockCanvasContext
