@@ -3,6 +3,41 @@ Author:  Lyall Jonathan Di Trapani
 LJD 16-bit Computer Video Sub-system
 ---------|---------|---------|---------|---------|---------|---------|--
 ###
+RAM_TILE = [
+  parseInt '00011011' + '11100100', 2
+  parseInt '11111111' + '11111111', 2
+  parseInt '00000000' + '11111111', 2
+  parseInt '01010101' + '11111111', 2
+  parseInt '00000000' + '10101010', 2
+  parseInt '00000000' + '00000000', 2
+  parseInt '00000000' + '00000000', 2
+  parseInt '11100100' + '00011011', 2
+]
+
+test 'Single 16-bit color to 24-bit color conversion', ->
+  inputs = [
+    parseInt('00000' + '000000' + '00000', 2) # Black
+    parseInt('11111' + '000000' + '00000', 2) # Red
+    parseInt('00000' + '111111' + '00000', 2) # Green
+    parseInt('00000' + '000000' + '11111', 2) # Blue
+    parseInt('11111' + '111111' + '11111', 2) # White
+    parseInt('00000' + '100000' + '10000', 2) # Cyan
+    parseInt('10101' + '101011' + '00000', 2) # Yellow
+    parseInt('10000' + '000000' + '10000', 2) # Magenta
+  ]
+  outputs = [
+    [0, 0, 0]
+    [0xFF, 0, 0]
+    [0, 0xFF, 0]
+    [0, 0, 0xFF]
+    [0xFF, 0xFF, 0xFF]
+    [0, 130, 132]
+    [173, 174, 0]
+    [132, 0, 132]
+  ]
+  for input, i in inputs
+    output = outputs[i]
+    deepEqual ljd.Video.to24bitColor(input), output
 
 module 'Tile',
   setup: ->
@@ -81,6 +116,18 @@ test 'Bad input', ->
   throws (-> @tile.flip(4)), /n=4; n must be between 0 and 3 inclusive/
 
 
+module 'Cell',
+  setup: ->
+
+test 'construction', ->
+  ramCell = (2 << 8) + (1 << 4) + 0   # Tile # 2, cp1 = 1, cp2 = 0
+  cell = new ljd.Video.Cell(ramCell)
+  equal cell.tileIndex, 2
+  equal cell.colorPair1, 1
+  equal cell.colorPair2, 0
+  equal cell.sprite, false
+
+
 class MockCanvasContext
 
   constructor: (@imageData) ->
@@ -96,13 +143,8 @@ module 'Video',
     Video = ljd.Video
     @ram = (0 for _ in [0...(Math.pow(2, 16))])
 
-    # Tile pixels:
-    # first 4 pixels = [0, 1, 2, 3]
-    # As a byte in base 2:  %00011011
-    # As a byte in hex: 0x1B
-    first8pixels = 0x1B << 8
-    addressOf3rdTile = Video.TILE_INDEX + (Video.TILE_INDEX_STEP * 2)
-    @ram[addressOf3rdTile] = first8pixels
+    addressOfTile2 = Video.TILE_INDEX + (Video.TILE_INDEX_STEP * 2)
+    @ram[addressOfTile2...(addressOfTile2 + 8)] = RAM_TILE
 
     TILE_COLORS = Video.TILE_COLORS
     @ram[TILE_COLORS...(TILE_COLORS + 4)] = [
@@ -127,31 +169,6 @@ module 'Video',
     context = new MockCanvasContext({data: @data})
     @video = new Video(@ram, context, 4)
 
-test 'Single 16-bit color to 24-bit color conversion', ->
-  inputs = [
-    parseInt('00000' + '000000' + '00000', 2) # Black
-    parseInt('11111' + '000000' + '00000', 2) # Red
-    parseInt('00000' + '111111' + '00000', 2) # Green
-    parseInt('00000' + '000000' + '11111', 2) # Blue
-    parseInt('11111' + '111111' + '11111', 2) # White
-    parseInt('00000' + '100000' + '10000', 2) # Cyan
-    parseInt('10101' + '101011' + '00000', 2) # Yellow
-    parseInt('10000' + '000000' + '10000', 2) # Magenta
-  ]
-  outputs = [
-    [0, 0, 0]
-    [0xFF, 0, 0]
-    [0, 0xFF, 0]
-    [0, 0, 0xFF]
-    [0xFF, 0xFF, 0xFF]
-    [0, 130, 132]
-    [173, 174, 0]
-    [132, 0, 132]
-  ]
-  for input, i in inputs
-    output = outputs[i]
-    deepEqual ljd.Video.to24bitColor(input), output
-
 test '16-bit to 24-bit color conversion for all colors', ->
   @video.make24bitColors(@ram)
   tileColorPairs = [
@@ -166,6 +183,14 @@ test '16-bit to 24-bit color conversion for all colors', ->
   equal @video.spriteColorPairs.length, 16
   deepEqual @video.tileColorPairs[0...2], tileColorPairs
   deepEqual @video.spriteColorPairs[0...2], spriteColorPairs
+
+test 'makeTiles', ->
+  @video.makeTiles(@ram)
+  equal @video.tiles.length, 256
+  tile2 = @video.tiles[2]
+  equal tile2.array.length, 8
+  equal tile2.array[7].length, 8
+  deepEqual tile2.array[0], [0, 1, 2, 3, 3, 2, 1, 0]
 
 
 ###
