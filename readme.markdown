@@ -16,50 +16,74 @@ Colors are 16-bits with (5:6:5) RGB color format
 
 Video Ram
 ---------
-
-
 ```
 5,068 Words (< 10 KB)
 
-                words   address range
--------------------------------------
-Tile index      2,048   $EC00-$F3FF
-Grid cells      2,400   $F400-$F59D
-Cell x y flip     300   $FD60-$FE8B
-Sprites           256   $FE8C-$FF8B
-Tile colors        32   $FF8C-$FFAB
-Sprite colors      32   $FFAC-$FFCB
--------------------------------------
+                Words   Address Range   Description
+----------------------------------------------------------------------
+Tile index      2,048   $EC00-$F3FF     256 tiles X 8 words
+Grid cells      2,400   $F400-$F59D     60 X 40 cells
+Cell x y flip     300   $FD60-$FE8B     2 bit X 2,400 / 16
+Sprites           256   $FE8C-$FF8B     attribute data for 128 sprites
+Tile colors        32   $FF8C-$FFAB     32 tile colors
+Sprite colors      32   $FFAC-$FFCB     32 sprite colors
+----------------------------------------------------------------------
 Total           5,068
-
-------------------------------------------------------------------
-Single tile        8    Words   8 X 8 tile times 2 bits
-                                (16 bits per word)
-Tile index      2048    Words   256 tiles X 8 words
-Each tile cell     1    Word    8 bit tile select +
-                                4 bit foreground color pair +
-                                4 bit background color pair
-Number of cells 2400            60 X 40 grid cells
-cell x y flip    300    Words   2 bit X 2,400 / 16
-Sprites          256    attribute data for 128 sprites
-32 tile colors    32    Words
-32 sprite colors  32    words
-
-
-16 x 2 x 16-bit colors
-(16 pairs of 16-bit colors)
-4 bit color pair index
-8x8 pixel tiles
 ```
+
+
+Tiles
+-----
+Each pixel in a tile is represented by 2-bits.  Each 2-bit value indexes into the selected four colors.
+```
+Size:  8 words
+8 x 8 pixel tiles = 64 pixels
+2-bits per pixel
+Each word contains a row of 8 pixels
+For a given pixel in a tile, bit one selects the color pair,
+and bit zero selects the color. 
+00 -> pair 0, color 0
+01 -> pair 0, color 1
+10 -> pair 1, color 0
+11 -> pair 1, color 1
+```
+
+
+Grid Cell
+---------
+```
+Size:  1 word
+Color pairs are indexed into the tile colors (not the sprite colors)
+Sprite data:
+
+                    # of bits
+------------------------------------
+Tile index          8
+Color pair 1 (cp1)  4
+Color pair 2 (cp2)  4
+------------------------------------
+Total              16 bits = 1 word
+
+
+Layout of a grid cell in RAM:
+
+ F E D C B A 9 8 7 6 5 4 3 2 1 0
+---------------------------------
+|   Tile Index  |  cp1  |  cp2  |
+---------------------------------
+```
+
+
+Cell X Y Flip
+-------------
+Each background tile in the grid cell can be flipped about the x axis or
+the y axis.  This requires 2-bits per cell.  Bit one is for flipping about the x axis and bit 0 is for flipping about y axis.
+
 
 Sprites
 -------
 ```
-128 sprites
-2 words per sprite
-256 words of sprite data
-
-
+Size:  2 words
 Sprite data:
 
                     # of bits
@@ -76,7 +100,7 @@ y position          6
 Total              32 bits = 2 words
 
 
-Layout of a sprite accross 2 RAM cells:
+Layout of a sprite across 2 RAM cells:
 
  F E D C B A 9 8 7 6 5 4 3 2 1 0       F E D C B A 9 8 7 6 5 4 3 2 1 0
 ---------------------------------     ---------------------------------
@@ -85,13 +109,25 @@ Layout of a sprite accross 2 RAM cells:
 ```
 
 
+Colors Pairs
+------------
+```
+There are 2 sets of color pairs:  tile and sprite
+Each set has 32 colors arranged in 16 pairs
+16 x 2 x 16-bit colors
+4-bit color pair index
+```
+
+
 Video hardware
 --------------
 ```
-Instead of doing copy over to video RAM, could use double buffer
-So just swap buffers instead of doing copy; instantaneous!
-Could do the same for all I/O.
+Instead of doing copy over to video RAM, use triple buffer
+So just swap buffers instead of doing copy; instantaneous.
+Do the same for all I/O.
 
+If not using triple buffers (obsolete):
+---------------------------------------
 First 90 ms of frame:  CPU controls RAM lines
 Next 10 ms of frame:  CPU sleeps
     video chip controls RAM Address and data out lines
@@ -100,7 +136,7 @@ Control returned to CPU
 Video ram draws info to screen in continuous loop for next 90 ms
 
 Video loop 1 (7 operations)
-------------
+---------------------------
 1) Use row/col counters to load tile cell
 2) Use tile slot color pair IDs to load 4 colors from color pairs
 3) Use row/col counters and tile ID to load tile row
@@ -108,7 +144,7 @@ Video loop 1 (7 operations)
 5) Switch buffers and goto 1)
 
 Video loop 2 (8 operations)
-------------
+---------------------------
 1) Draw 8 pixel row to screen (16-bit row)
 2) Switch buffers Goto 1)
 
