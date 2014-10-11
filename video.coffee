@@ -58,7 +58,10 @@ Cell (same for both Tile and Sprite)
   cp1: 0-15
   cp2: 0-15
   sprite:  false | sprite Cell
-  XYflip: 0-3
+  xyFlip: 0-3
+  --------Sprite only---------
+  xPosition
+  yPosition
   ----------------------------
   tile: Tile
   colors: 4-element array
@@ -86,6 +89,14 @@ class Cell
 ###
 
 
+makeSprite = (value0, value1) ->
+  sprite = new Cell(value0)
+  sprite.xyFlip = value1 >> 14
+  sprite.xPosition = (value1 >> 8) & 0x3F
+  sprite.yPosition = value1 & 0x3F
+  sprite
+
+
 class Video
 
   constructor: (@ram, @context, @zoom) ->
@@ -106,7 +117,6 @@ class Video
     @makeGrid()
 
     @makeSprites()
-    @setSpriteXYFlip()
     @setSpriteColors()
     @setSpriteTiles()
 
@@ -156,6 +166,13 @@ class Video
       ramCellRow = @ram[startAddress...endAddress]
       row = makeRow ramCellRow
       @grid.push row
+
+  makeSprites: ->
+    @sprites = []
+    for i in [0...128]
+      address = Video.SPRITES + i * 2
+      [value0, value1] = @ram[address..(address + 1)]
+      @sprites.push makeSprite(value0, value1)
 
   # Must ensure if a sprite already exists on cell
   # do not replace with new one, keep old sprite
