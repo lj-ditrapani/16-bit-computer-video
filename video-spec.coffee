@@ -161,9 +161,22 @@ module 'Video',
       parseInt('10000' + '000000' + '10000', 2) # Magenta
     ]
 
-    addressOf2ndCell = Video.GRID_CELLS + 1
-    # grid cell:  8-bit tile index; 4-bit color pair1; 4-bit color pair2
-    @ram[addressOf2ndCell] = parseInt('00000010' + '0001' + '0000', 2)
+    addressOfCell1 = Video.GRID_CELLS + 1
+    @ram[Video.GRID_CELLS...(Video.GRID_CELLS + 8)] = [
+      #gridCell:tileIndex;colorPair1;colorPair2
+      parseInt('00000010' + '0001' + '0000', 2)
+      parseInt('00000010' + '0001' + '0000', 2)
+      parseInt('00000010' + '0001' + '0000', 2)
+      parseInt('00000010' + '0001' + '0000', 2)
+      parseInt('00000010' + '0000' + '0001', 2)
+      parseInt('00000010' + '0000' + '0001', 2)
+      parseInt('00000010' + '0000' + '0001', 2)
+      parseInt('00000010' + '0000' + '0001', 2)
+    ]
+    @ram[Video.GRID_CELLS + 2399] =
+      #        tile # 255   cp1=15   cp2=10
+      parseInt('11111111' + '1111' + '1010', 2)
+
     numElements = 480 * 320 * 4 * 4
     @data = (0 for _ in [0...numElements])
     context = new MockCanvasContext({data: @data})
@@ -185,12 +198,28 @@ test '16-bit to 24-bit color conversion for all colors', ->
   deepEqual @video.spriteColorPairs[0...2], spriteColorPairs
 
 test 'makeTiles', ->
-  @video.makeTiles(@ram)
+  @video.makeTiles()
   equal @video.tiles.length, 256
   tile2 = @video.tiles[2]
   equal tile2.array.length, 8
   equal tile2.array[7].length, 8
   deepEqual tile2.array[0], [0, 1, 2, 3, 3, 2, 1, 0]
+
+test 'makeGrid', ->
+  @video.makeGrid()
+  grid = @video.grid
+  [row0, row39] = [grid[0], grid[39]]
+  equal grid.length, 40, '40 rows'
+  deepEqual [row0.length, row39.length], [60, 60], '60 columns'
+  tests = [
+    [row0[0], 2, 1, 0]
+    [row0[7], 2, 0, 1]
+    [row39[59], 255, 15, 10]
+  ]
+  for [cell, tileIndex, cp1, cp2] in tests
+    deepEqual [cell.tileIndex, cell.colorPair1, cell.colorPair2],
+              [tileIndex, cp1, cp2],
+              'Check individual cells'
 
 
 ###
