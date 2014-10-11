@@ -104,7 +104,6 @@ ljd.makeRAM = () ->
     parseInt('11111111' + '1111' + '1010', 2)
 
   ram[Video.CELL_X_Y_FLIP] = makeXYFlip(0, 2, 1, 3, 0, 0, 0, 0)
-  console.log ram[Video.CELL_X_Y_FLIP]
 
   spriteData = [
     # tile cp1 cp2  XY xpos ypos
