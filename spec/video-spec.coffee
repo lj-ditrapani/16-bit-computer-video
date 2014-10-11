@@ -62,7 +62,7 @@ module 'Video',
     @video = new Video(@ram, context, 4)
 
 test '16-bit to 24-bit color conversion for all colors', ->
-  @video.make24bitColors(@ram)
+  @video.make24bitColors()
   tileColorPairs = [
     [[0, 0, 0],    [0xFF, 0, 0]]
     [[0, 0xFF, 0], [0, 0, 0xFF]]
@@ -103,7 +103,25 @@ test 'makeGrid', ->
 test 'makeSprites', ->
   @video.makeSprites()
   sprites = @video.sprites
-  equal sprites.length, 128
+  equal sprites.length, 128, '128 sprites'
+  tests = [
+    #  #   tile cp1 cp2  XY xpos ypos
+    [  0,    3,  1,  0,  0,   4,   0]
+    [  1,    3,  1,  0,  2,   5,   0]
+    [  2,    3,  1,  0,  1,   6,   0]
+    [  3,    3,  1,  0,  3,   7,   0]
+    [  4,  255,  0,  1,  0,  59,  38]
+    [  5,  255,  0,  1,  0,  58,  39]
+    [127,    0,  0,  0,  0,   0,   0]
+  ]
+  for [i, tile, cp1, cp2, xy, xpos, ypos] in tests
+    label = "Sprite #{i}"
+    sprite = sprites[i]
+    deepEqual [sprite.tileIndex, sprite.colorPair1, sprite.colorPair2],
+              [tile, cp1, cp2], label
+    deepEqual [sprite.xyFlip, sprite.xPosition, sprite.yPosition],
+              [xy, xpos, ypos], label
+    equal sprite.sprite, false, label
 
 
 ###
