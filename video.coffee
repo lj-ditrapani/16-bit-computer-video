@@ -2,29 +2,19 @@
 Author:  Lyall Jonathan Di Trapani
 LJD 16-bit Computer Video Sub-system
 ---------|---------|---------|---------|---------|---------|---------|--
-Convert the 64 16-bit colors to 24-bit colors
 Create convenient data structures from video RAM
-  - List of tiles
-  - tile & sprite grid cells -> 60 x 40 matrix of Cells
   - List of sprites
 For each row in grid
   for each cell in grid
-    Convert cell (word) -> [index, cp1, cp2]
-    get the tile
-    convert tile to 8x8 matrix of 2-bit numbers
-    get cell X Y flip data
     Perform any necessary flipping of tile data structure
-    get the 4 24-bit tile colors
     if a sprite exists on that cell
-      get the first sprite in list
       get the sprite tile
       convert tile to 8x8 matrix
       do any flipping
       get 4 24-bit sprite colors
     Write all 64 pixels (8x8) for cell into imagePixelData
 
-Grid
-  60x40 Cells
+setSpriteTiles
 ###
 
 
@@ -73,10 +63,10 @@ Cell (same for both Tile and Sprite)
   tile: Tile
   colors: 4-element array
   ----------------------------
+  setSprite(spriteCell)
+  setXYflip(2-bit XY flip)
   setTile(@tiles)
   setColors(@tileColors or @spriteColors)
-  setXYflip(2-bit XY flip)
-  setSprite(spriteCell)
 ###
 class Cell
 
@@ -85,6 +75,15 @@ class Cell
     @colorPair1 = (ramCell >> 4) & 0xF
     @colorPair2 = ramCell & 0xF
     @sprite = false
+
+###
+  setSprite: (spriteCell) ->
+    if @sprite is false
+      @sprite = spriteCell
+
+  setXYflip: (xyFlip) ->
+    @xyFlip = xyFlip
+###
 
 
 class Video
@@ -107,10 +106,11 @@ class Video
     @makeGrid()
 
     @makeSprites()
+    @setSpriteXYFlip()
     @setSpriteColors()
     @setSpriteTiles()
 
-    @setGridXYvalues()
+    @setGridXYFlip()
     @setGridSprites()
     @setGridColors()
     @setGridTiles()
@@ -156,6 +156,12 @@ class Video
       ramCellRow = @ram[startAddress...endAddress]
       row = makeRow ramCellRow
       @grid.push row
+
+  # Must ensure if a sprite already exists on cell
+  # do not replace with new one, keep old sprite
+  # If recycling data structures, be sure to clear
+  # all sprites at beginning
+  setGridSprites: ->
 
 Video.to24bitColor = (color) ->
   r16 = color >> 11
