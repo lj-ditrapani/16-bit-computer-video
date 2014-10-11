@@ -146,6 +146,17 @@ class Video
       ramTile = @ram[startAddress...(startAddress + 8)]
       @tiles.push(new Tile(ramTile))
 
+  makeGrid: ->
+    makeRow = (ramCellRow) ->
+      ramCellRow.map((ramCell) -> (new Cell(ramCell)))
+    @grid = []
+    for i in [0...40]
+      startAddress = Video.GRID_CELLS + i * 60
+      endAddress = Video.GRID_CELLS + i * 60 + 60 
+      ramCellRow = @ram[startAddress...endAddress]
+      row = makeRow ramCellRow
+      @grid.push row
+
 Video.to24bitColor = (color) ->
   r16 = color >> 11
   g16 = (color >> 5) & 0x3F  # 11_1111
