@@ -46,25 +46,7 @@ Tile.flipY = (array) ->
   array.map((row) -> row.reverse())
 
 
-###
-Cell (same for both Tile and Sprite)
-  constructor(ramCell)
-  tile index: 0-255
-  cp1: 0-15
-  cp2: 0-15
-  sprite:  false | sprite Cell
-  xyFlip: 0-3
-  --------Sprite only---------
-  xPosition
-  yPosition
-  ----------------------------
-  tile: Tile
-  colors: 4-element array
-  ----------------------------
-  setSprite(spriteCell)
-  setTile(@tiles)
-  setColors(@tileColors or @spriteColors)
-###
+# Used for both sprites and cells
 class Cell
 
   constructor: (ramCell) ->
@@ -117,9 +99,8 @@ class Video
 
     @setGridSprites()
     ###
+    @setGridColorsAndTiles()
     @setGridXYFlip()
-    @setGridColors()
-    @setGridTiles()
     ###
 
   # Update imageData based on new in data structures
@@ -132,13 +113,13 @@ class Video
   # They are the 24-bit versions of the 16-bit tile color pairs and
   # sprite color pairs in video RAM.
   make24bitColors: () ->
-    [@tileColorPairs, @spriteColorPairs] = [[], []]
+    [@cellColorPairs, @spriteColorPairs] = [[], []]
     @_make24bitColors 'tile'
     @_make24bitColors 'sprite'
 
   _make24bitColors: (colorSet) ->
     [address, array] = {
-      tile: [Video.TILE_COLORS, @tileColorPairs]
+      tile: [Video.TILE_COLORS, @cellColorPairs]
       sprite: [Video.SPRITE_COLORS, @spriteColorPairs]
     }[colorSet]
     for i in [0...16]
@@ -185,6 +166,12 @@ class Video
       cell = @grid[sprite.yPosition][sprite.xPosition]
       cell.setSprite(sprite)
 
+  setGridColorsAndTiles: ->
+    for i in [0...40]
+      for j in [0...60]
+        cell = @grid[i][j]
+        cell.setColors(@cellColorPairs)
+        cell.setTile(@titles)
 
 Video.to24bitColor = (color) ->
   r16 = color >> 11
