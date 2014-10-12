@@ -98,8 +98,8 @@ class Video
     @setSpriteColorsAndTiles()
 
     @setGridSprites()
-    ###
     @setGridColorsAndTiles()
+    ###
     @setGridXYFlip()
     ###
 
@@ -171,7 +171,7 @@ class Video
       for j in [0...60]
         cell = @grid[i][j]
         cell.setColors(@cellColorPairs)
-        cell.setTile(@titles)
+        cell.setTile(@tiles)
 
 Video.to24bitColor = (color) ->
   r16 = color >> 11
