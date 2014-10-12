@@ -159,7 +159,7 @@ class Video
     @grid = []
     for i in [0...40]
       startAddress = Video.GRID_CELLS + i * 60
-      endAddress = Video.GRID_CELLS + i * 60 + 60 
+      endAddress = Video.GRID_CELLS + i * 60 + 60
       ramCellRow = @ram[startAddress...endAddress]
       row = makeRow ramCellRow
       @grid.push row
