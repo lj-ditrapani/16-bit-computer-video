@@ -2,19 +2,14 @@
 Author:  Lyall Jonathan Di Trapani
 LJD 16-bit Computer Video Sub-system
 ---------|---------|---------|---------|---------|---------|---------|--
-Create convenient data structures from video RAM
-  - List of sprites
 For each row in grid
   for each cell in grid
     Perform any necessary flipping of tile data structure
     if a sprite exists on that cell
       get the sprite tile
-      convert tile to 8x8 matrix
-      do any flipping
+      perform any necessary flipping of tile data structure
       get 4 24-bit sprite colors
     Write all 64 pixels (8x8) for cell into imagePixelData
-
-setSpriteTiles
 ###
 
 
@@ -67,7 +62,6 @@ Cell (same for both Tile and Sprite)
   colors: 4-element array
   ----------------------------
   setSprite(spriteCell)
-  setXYflip(2-bit XY flip)
   setTile(@tiles)
   setColors(@tileColors or @spriteColors)
 ###
@@ -79,14 +73,16 @@ class Cell
     @colorPair2 = ramCell & 0xF
     @sprite = false
 
-###
+  setColors: (colorPairs) ->
+    @colors = colorPairs[@colorPair1]
+    @colors = @colors.concat(colorPairs[@colorPair2])
+
+  setTile: (tiles) ->
+    @tile = tiles[@tileIndex]
+
   setSprite: (spriteCell) ->
     if @sprite is false
       @sprite = spriteCell
-
-  setXYflip: (xyFlip) ->
-    @xyFlip = xyFlip
-###
 
 
 makeSprite = (value0, value1) ->
@@ -117,13 +113,14 @@ class Video
     @makeGrid()
 
     @makeSprites()
-    @setSpriteColors()
-    @setSpriteTiles()
+    @setSpriteColorsAndTiles()
 
-    @setGridXYFlip()
     @setGridSprites()
+    ###
+    @setGridXYFlip()
     @setGridColors()
     @setGridTiles()
+    ###
 
   # Update imageData based on new in data structures
   updateScreen: ->
@@ -174,11 +171,20 @@ class Video
       [value0, value1] = @ram[address..(address + 1)]
       @sprites.push makeSprite(value0, value1)
 
+  setSpriteColorsAndTiles: ->
+    for sprite in @sprites
+      sprite.setColors(@spriteColorPairs)
+      sprite.setTile(@tiles)
+
   # Must ensure if a sprite already exists on cell
   # do not replace with new one, keep old sprite
   # If recycling data structures, be sure to clear
   # all sprites at beginning
   setGridSprites: ->
+    for sprite in @sprites
+      cell = @grid[sprite.yPosition][sprite.xPosition]
+      cell.setSprite(sprite)
+
 
 Video.to24bitColor = (color) ->
   r16 = color >> 11
