@@ -123,6 +123,46 @@ test 'makeSprites', ->
               [xy, xpos, ypos], label
     equal sprite.sprite, false, label
 
+test 'setSpriteColorsAndTiles', ->
+  @video.updateData()
+  sprites = @video.sprites
+  console.log
+  tests = [
+    # s#   color 0             color 3      tile[0][0]
+    [  0, [173, 174, 0],      [0, 130, 132], 3]  # 1 0 Yellow Cyan
+    [  4, [0xFF, 0xFF, 0xFF], [132, 0, 132], 1]  # 0 1 White Magenta
+    [127, [0xFF, 0xFF, 0xFF], [0, 130, 132], 0]  # 0 0 White Cyan
+  ]
+  for [i, color0, color3, pixel00] in tests
+    sprite = sprites[i]
+    equal sprite.colors.length, 4, '4 colors'
+    deepEqual sprite.colors[0], color0, 'Color 0 is correct'
+    deepEqual sprite.colors[3], color3, 'Color 3 is correct'
+    equal sprite.tile.array[0][0], pixel00, 'First pixel is correct'
+
+test 'setGridSprites', ->
+  @video.updateData()
+  tests = [
+    # tile cp1 cp2  XY xpos ypos
+    [    3,  1,  0,  0,   4,   0]
+    [    3,  1,  0,  2,   5,   0]
+    [    3,  1,  0,  1,   6,   0]
+    [    3,  1,  0,  3,   7,   0]
+    [  255,  0,  1,  0,  59,  38]
+    [  255,  0,  1,  0,  58,  39]
+    [  255,  1,  1,  3,   0,   0]
+  ]
+  for [tile, cp1, cp2, xy, xPosition, yPosition] in tests
+    cell = @video.grid[yPosition][xPosition]
+    sprite = cell.sprite
+    label = "Sprite @ (#{xPosition},#{yPosition})"
+    deepEqual [sprite.tileIndex, sprite.colorPair1, sprite.colorPair2],
+              [tile, cp1, cp2], label
+    deepEqual [sprite.xyFlip, sprite.xPosition, sprite.yPosition],
+              [xy, xPosition, yPosition], label
+    equal sprite.sprite, false, label
+
+
 
 ###
 # ? R G B #
