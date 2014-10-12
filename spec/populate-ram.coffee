@@ -66,18 +66,18 @@ ljd.makeRAM = () ->
   addressOfTile255 = Video.TILE_INDEX + (Video.TILE_INDEX_STEP * 255)
   setRAM ram, addressOfTile255, RAM_TILE3
 
-  tileColors = [
+  cellColors = [
     parseInt('00000' + '000000' + '00000', 2) # Black
     parseInt('11111' + '000000' + '00000', 2) # Red
     parseInt('00000' + '111111' + '00000', 2) # Green
     parseInt('00000' + '000000' + '11111', 2) # Blue
   ]
-  setRAM ram, Video.TILE_COLORS, tileColors
-  lastTileColors = [
+  setRAM ram, Video.TILE_COLORS, cellColors
+  lastCellColors = [
     parseInt('10000' + '100001' + '10000', 2) # Grey
     parseInt('11111' + '001000' + '10000', 2) # Pink
   ]
-  setRAM ram, (Video.TILE_COLORS + 15 * 2), lastTileColors
+  setRAM ram, (Video.TILE_COLORS + 15 * 2), lastCellColors
   spriteColors = [
     parseInt('11111' + '111111' + '11111', 2) # White
     parseInt('00000' + '100000' + '10000', 2) # Cyan
