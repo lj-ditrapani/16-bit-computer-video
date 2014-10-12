@@ -63,7 +63,7 @@ module 'Video',
 
 test '16-bit to 24-bit color conversion for all colors', ->
   @video.make24bitColors()
-  tileColorPairs = [
+  cellColorPairs = [
     [[0, 0, 0],    [0xFF, 0, 0]]
     [[0, 0xFF, 0], [0, 0, 0xFF]]
   ]
@@ -71,9 +71,9 @@ test '16-bit to 24-bit color conversion for all colors', ->
     [[0xFF, 0xFF, 0xFF], [0, 130, 132]]
     [[173, 174, 0],      [132, 0, 132]]
   ]
-  equal @video.tileColorPairs.length, 16
+  equal @video.cellColorPairs.length, 16
   equal @video.spriteColorPairs.length, 16
-  deepEqual @video.tileColorPairs[0...2], tileColorPairs
+  deepEqual @video.cellColorPairs[0...2], cellColorPairs
   deepEqual @video.spriteColorPairs[0...2], spriteColorPairs
 
 test 'makeTiles', ->
@@ -162,6 +162,7 @@ test 'setGridSprites', ->
               [xy, xPosition, yPosition], label
     equal sprite.sprite, false, label
 
+test 'setGridColorsAndTiles', ->
 
 
 ###
