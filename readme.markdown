@@ -25,7 +25,7 @@ Tile index      2,048   $EC00-$F3FF     256 tiles X 8 words
 Grid cells      2,400   $F400-$F59D     60 X 40 cells
 Cell x y flip     300   $FD60-$FE8B     2 bit X 2,400 / 16
 Sprites           256   $FE8C-$FF8B     attribute data for 128 sprites
-Tile colors        32   $FF8C-$FFAB     32 tile colors
+Cell colors        32   $FF8C-$FFAB     32 cell colors
 Sprite colors      32   $FFAC-$FFCB     32 sprite colors
 ----------------------------------------------------------------------
 Total           5,068
@@ -53,7 +53,7 @@ Grid Cell
 ---------
 ```
 Size:  1 word
-Color pairs are indexed into the tile colors (not the sprite colors)
+Color pairs are indexed into the cell colors (not the sprite colors)
 Sprite data:
 
                     # of bits
@@ -112,7 +112,7 @@ Layout of a sprite across 2 RAM cells:
 Colors Pairs
 ------------
 ```
-There are 2 sets of color pairs:  tile and sprite
+There are 2 sets of color pairs:  cell and sprite
 Each set has 32 colors arranged in 16 pairs
 16 x 2 x 16-bit colors
 4-bit color pair index
@@ -138,7 +138,7 @@ Video ram draws info to screen in continuous loop for next 90 ms
 Video loop 1 (7 operations)
 ---------------------------
 1) Use row/col counters to load tile cell
-2) Use tile slot color pair IDs to load 4 colors from color pairs
+2) Use cell color pair IDs to load 4 colors from color pairs
 3) Use row/col counters and tile ID to load tile row
 4) increment row/col counters as necessary
 5) Switch buffers and goto 1)
