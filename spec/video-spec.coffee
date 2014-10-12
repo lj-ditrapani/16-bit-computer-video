@@ -126,7 +126,6 @@ test 'makeSprites', ->
 test 'setSpriteColorsAndTiles', ->
   @video.updateData()
   sprites = @video.sprites
-  console.log
   tests = [
     # s#   color 0             color 3      tile[0][0]
     [  0, [173, 174, 0],      [0, 130, 132], 3]  # 1 0 Yellow Cyan
@@ -163,6 +162,20 @@ test 'setGridSprites', ->
     equal sprite.sprite, false, label
 
 test 'setGridColorsAndTiles', ->
+  @video.updateData()
+  grid = @video.grid
+  tests = [
+    # x,  y   color 0             color 3       tile[0][4]
+    [ 0,  0, [0x00, 0xFF, 0x00], [0xFF, 0x00, 0x00], 3]  # 1 0 Gn Rd
+    [ 8,  0, [0x00, 0x00, 0x00], [0x00, 0x00, 0xFF], 0]  # 0 1 Ba Bu
+    [59, 39, [0x84, 0x86, 0x84], [0x00, 0x00, 0x00], 1]  # F A Gy Ba
+  ]
+  for [x, y, color0, color3, pixel04] in tests
+    cell = grid[y][x]
+    equal cell.colors.length, 4, '4 colors'
+    deepEqual cell.colors[0], color0, 'Color 0 is correct'
+    deepEqual cell.colors[3], color3, 'Color 3 is correct'
+    equal cell.tile.array[0][4], pixel04, '4th pixel is correct'
 
 
 ###
