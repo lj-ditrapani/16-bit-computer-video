@@ -1,65 +1,16 @@
 ###
 Author:  Lyall Jonathan Di Trapani
 LJD 16-bit Computer Video Sub-system
+Main video specs requiring Video spec module set-up
 ---------|---------|---------|---------|---------|---------|---------|--
 ###
 
-test 'Single 16-bit color to 24-bit color conversion', ->
-  inputs = [
-    parseInt('00000' + '000000' + '00000', 2) # Black
-    parseInt('11111' + '000000' + '00000', 2) # Red
-    parseInt('00000' + '111111' + '00000', 2) # Green
-    parseInt('00000' + '000000' + '11111', 2) # Blue
-    parseInt('11111' + '111111' + '11111', 2) # White
-    parseInt('00000' + '100000' + '10000', 2) # Cyan
-    parseInt('10101' + '101011' + '00000', 2) # Yellow
-    parseInt('10000' + '000000' + '10000', 2) # Magenta
-  ]
-  outputs = [
-    [0, 0, 0]
-    [0xFF, 0, 0]
-    [0, 0xFF, 0]
-    [0, 0, 0xFF]
-    [0xFF, 0xFF, 0xFF]
-    [0, 130, 132]
-    [173, 174, 0]
-    [132, 0, 132]
-  ]
-  for input, i in inputs
-    output = outputs[i]
-    deepEqual ljd.Video.to24bitColor(input), output
-
-
-module 'Cell',
-  setup: ->
-
-test 'construction', ->
-  ramCell = (2 << 8) + (1 << 4) + 0   # Tile # 2, cp1 = 1, cp2 = 0
-  cell = new ljd.Video.Cell(ramCell)
-  equal cell.tileIndex, 2
-  equal cell.colorPair1, 1
-  equal cell.colorPair2, 0
-  equal cell.sprite, false
-
-
-class MockCanvasContext
-
-  constructor: (@imageData) ->
-
-  createImageData: (width, height) ->
-    @imageData
-
-  putImageData: (imageData, x, y) ->
-
-
 module 'Video',
   setup: ->
-    Video = ljd.Video
     @ram = ljd.makeRAM()
-    numElements = 480 * 320 * 4 * 4
-    @data = (0 for _ in [0...numElements])
-    context = new MockCanvasContext({data: @data})
-    @video = new Video(@ram, context, 4)
+    context = new ljd.MockCanvasContext()
+    @video = new ljd.Video(@ram, context, 4)
+    @data = context.createImageData(480, 320).data
 
 test '16-bit to 24-bit color conversion for all colors', ->
   @video.make24bitColors()
@@ -184,72 +135,3 @@ test 'setGridXYFlip', ->
   for xyFlip, i in tests
     cell = grid[0][i]
     equal cell.xyFlip, xyFlip
-
-test 'background first cell, first 8 pixels', ->
-  @video.update()
-  expectedColors = [
-    #R     G     B     A
-    0x00, 0xFF, 0x00, 0xFF  # Green 00
-    0x00, 0x00, 0xFF, 0xFF  # Blue  01
-    0x00, 0x00, 0x00, 0xFF  # Black 10
-    0xFF, 0x00, 0x00, 0xFF  # Red   11
-    0xFF, 0x00, 0x00, 0xFF  # Red
-    0x00, 0x00, 0x00, 0xFF  # Black
-    0x00, 0x00, 0xFF, 0xFF  # Blue
-    0x00, 0xFF, 0x00, 0xFF  # Green
-  ]
-  # first 8 pixels (0-7) of first cell in first row
-  deepEqual @data[0...32], expectedColors
-
-test 'background first cell, last 8 pixels', ->
-  @video.update()
-  expectedColors = [
-    #R     G     B     A
-    0xFF, 0x00, 0x00, 0xFF  # Red   11
-    0x00, 0x00, 0x00, 0xFF  # Black 10
-    0x00, 0x00, 0xFF, 0xFF  # Blue  01
-    0x00, 0xFF, 0x00, 0xFF  # Green 00
-    0x00, 0xFF, 0x00, 0xFF  # Green
-    0x00, 0x00, 0xFF, 0xFF  # Blue
-    0x00, 0x00, 0x00, 0xFF  # Black
-    0xFF, 0x00, 0x00, 0xFF  # Red
-  ]
-  # last 8 pixels of first cell in first row
-  deepEqual @data[224...255], expectedColors
-
-test 'background last cell, first 8 pixels & last 8 pixels', ->
-  @video.update()
-  expectedColors = [
-    #R     G     B     A
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-  ]
-  # first 8 pixels (0-7) of last cell in last row
-  startAddress = (39 * 8 * 60 * 8 + 59 * 8) * 4
-  deepEqual @data[startAddress...(startAddress + 8 * 4)], expectedColors
-  # last 8 pixels (0-7) of last cell in last row
-  startAddress = (39 * 8 * 60 * 8 + 7 * 60 * 8 + 59 * 8) * 4
-  deepEqual @data[startAddress...(startAddress + 8 * 4)], expectedColors
-
-test 'background last cell, 8 pixels in row 5', ->
-  @video.update()
-  expectedColors = [
-    #R     G     B     A
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0x00, 0x00, 0x00, 0xFF  # Black
-    0x00, 0x00, 0x00, 0xFF  # Black
-    0x00, 0x00, 0x00, 0xFF  # Black
-    0x00, 0x00, 0x00, 0xFF  # Black
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-    0xFF, 0x20, 0x84, 0xFF  # Pink
-  ]
-  # 8 pixels of row 5 of last cell in last row
-  startAddress = (39 * 8 * 60 * 8 + 5 * 60 * 8 + 59 * 8) * 4
-  deepEqual @data[startAddress...(startAddress + 8 * 4)], expectedColors
