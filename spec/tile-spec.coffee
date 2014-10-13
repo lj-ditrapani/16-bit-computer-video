@@ -17,6 +17,7 @@ test 'construction', ->
 
 test 'flip about NO axies', ->
   actualArray = @tile.flip(0) # %00 base 2
+  deepEqual @tile.array, @array
   deepEqual actualArray, @array
 
 test 'flip about X axis', ->
@@ -31,6 +32,7 @@ test 'flip about X axis', ->
     [0, 1, 2, 3, 3, 2, 1, 0]
   ]
   actualArray = @tile.flip(2) # %10 base 2
+  deepEqual @tile.array, @array
   deepEqual actualArray, expectedArray
 
 test 'flip about Y axis', ->
@@ -45,6 +47,7 @@ test 'flip about Y axis', ->
     [3, 2, 1, 0, 0, 1, 2, 3]
   ]
   actualArray = @tile.flip(1) # %01 base 2
+  deepEqual @tile.array, @array
   deepEqual actualArray, expectedArray
 
 test 'flip about X and Y axies', ->
@@ -59,6 +62,7 @@ test 'flip about X and Y axies', ->
     [0, 1, 2, 3, 3, 2, 1, 0]
   ]
   actualArray = @tile.flip(3) # %11 base 2
+  deepEqual @tile.array, @array
   deepEqual actualArray, expectedArray
 
 test 'Bad input', ->
