@@ -2,14 +2,6 @@
 Author:  Lyall Jonathan Di Trapani
 LJD 16-bit Computer Video Sub-system
 ---------|---------|---------|---------|---------|---------|---------|--
-For each row in grid
-  for each cell in grid
-    Perform any necessary flipping of tile data structure
-    if a sprite exists on that cell
-      get the sprite tile
-      perform any necessary flipping of tile data structure
-      get 4 24-bit sprite colors
-    Write all 64 pixels (8x8) for cell into imagePixelData
 ###
 
 
@@ -25,11 +17,12 @@ class Tile
 
   # return a properly flipped array
   flip: (n) ->
+    array = @array.map((v) -> v.slice())
     switch n
-      when 0 then @array
-      when 1 then Tile.flipY @array
-      when 2 then Tile.flipX @array
-      when 3 then Tile.flipY Tile.flipX(@array)
+      when 0 then array
+      when 1 then Tile.flipY array
+      when 2 then Tile.flipX array
+      when 3 then Tile.flipY Tile.flipX(array)
       else throw Error("n=#{n}; n must be between 0 and 3 inclusive")
 
 Tile.word2row = (word) ->
@@ -111,6 +104,19 @@ class Video
 
   # Update imageData based on new in data structures
   updateScreen: ->
+    ###
+    For each row in grid
+      for each cell in grid
+        Perform any necessary flipping of tile data structure
+        if a sprite exists on that cell
+          get the sprite tile
+          perform any necessary flipping of tile data structure
+          get 4 24-bit sprite colors
+        Write all 64 pixels (8x8) for cell into imagePixelData
+    ###
+    for row in @grid
+      for cell in row
+        cell.tile.flip
 
   zoom: (amount) ->
     # amount is either 1 or 4
