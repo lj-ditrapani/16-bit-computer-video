@@ -75,6 +75,14 @@ makeSprite = (value0, value1) ->
   sprite
 
 
+splitXYword = (xyWord) ->
+  xyFlipX8 = []
+  for i in [0...8]
+    xyFlipX8.unshift(xyWord & 3)
+    xyWord = xyWord >> 2
+  xyFlipX8
+
+
 class Video
 
   constructor: (@ram, @context, @zoom) ->
@@ -99,9 +107,7 @@ class Video
 
     @setGridSprites()
     @setGridColorsAndTiles()
-    ###
     @setGridXYFlip()
-    ###
 
   # Update imageData based on new in data structures
   updateScreen: ->
@@ -157,10 +163,6 @@ class Video
       sprite.setColors(@spriteColorPairs)
       sprite.setTile(@tiles)
 
-  # Must ensure if a sprite already exists on cell
-  # do not replace with new one, keep old sprite
-  # If recycling data structures, be sure to clear
-  # all sprites at beginning
   setGridSprites: ->
     for sprite in @sprites
       cell = @grid[sprite.yPosition][sprite.xPosition]
@@ -172,6 +174,16 @@ class Video
         cell = @grid[i][j]
         cell.setColors(@cellColorPairs)
         cell.setTile(@tiles)
+
+  setGridXYFlip: ->
+    for i in [0...300]
+      xyWord = @ram[Video.CELL_X_Y_FLIP + i]
+      xyFlipX8 = splitXYword xyWord
+      for xyFlip, j in xyFlipX8
+        y = Math.floor((i * 8 + j) / 60)
+        x = (i * 8 + j) % 60
+        cell = @grid[y][x]
+        cell.xyFlip = xyFlip
 
 Video.to24bitColor = (color) ->
   r16 = color >> 11
