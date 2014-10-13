@@ -177,6 +177,14 @@ test 'setGridColorsAndTiles', ->
     deepEqual cell.colors[3], color3, 'Color 3 is correct'
     equal cell.tile.array[0][4], pixel04, '4th pixel is correct'
 
+test 'setGridXYFlip', ->
+  @video.updateData()
+  grid = @video.grid
+  tests = [0, 2, 1, 3, 0, 0, 0, 0]
+  for xyFlip, i in tests
+    cell = grid[0][i]
+    equal cell.xyFlip, xyFlip
+
 
 ###
 # ? R G B #
