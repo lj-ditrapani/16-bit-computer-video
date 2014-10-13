@@ -39,6 +39,17 @@ RAM_TILE3 = [
   parseInt '01010101' + '01010101', 2
 ]
 
+RAM_TILE4 = [
+  parseInt '11111111' + '11111111', 2
+  parseInt '11111111' + '11111111', 2
+  parseInt '11110101' + '01011111', 2
+  parseInt '11110101' + '01011111', 2
+  parseInt '11110101' + '01011111', 2
+  parseInt '11110101' + '01011111', 2
+  parseInt '11111111' + '11111111', 2
+  parseInt '11111111' + '11111111', 2
+]
+
 
 makeSprite = (tile, cp1, cp2, xy, xpos, ypos) ->
   word1 = tile << 8 | cp1 << 4 | cp2
@@ -65,6 +76,8 @@ ljd.makeRAM = () ->
   setRAM ram, addressOfTile3, RAM_TILE2
   addressOfTile255 = Video.TILE_INDEX + (Video.TILE_INDEX_STEP * 255)
   setRAM ram, addressOfTile255, RAM_TILE3
+  addressOfTile5 = Video.TILE_INDEX + (Video.TILE_INDEX_STEP * 5)
+  setRAM ram, addressOfTile5, RAM_TILE4
 
   cellColors = [
     parseInt('00000' + '000000' + '00000', 2) # Black
@@ -113,7 +126,7 @@ ljd.makeRAM = () ->
     [    3,  1,  0,  3,   7,   0]
     [  255,  0,  1,  0,  59,  38]
     [  255,  0,  1,  0,  58,  39]
-    [  255,  1,  1,  3,   0,   0]
+    [    5,  1,  1,  0,   0,   0]
   ]
   for [tile, cp1, cp2, xy, xpos, ypos], i in spriteData
     sprite = makeSprite(tile, cp1, cp2, xy, xpos, ypos)
