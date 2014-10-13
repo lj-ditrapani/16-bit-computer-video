@@ -76,6 +76,25 @@ splitXYword = (xyWord) ->
   xyFlipX8
 
 
+setPixel = (data, index, color) ->
+  data[index + 0] = color[0]
+  data[index + 1] = color[1]
+  data[index + 2] = color[2]
+  data[index + 3] = 255
+
+
+paint = (data, cell, gridX, gridY, sprite) ->
+  array = cell.tile.flip cell.xyFlip
+  colors = cell.colors
+  for row, tileY in array
+    baseIndex = Video.gridTile2ImageDataIndex(gridY, gridX, tileY)
+    for value, tileX in row
+      colorIndex = array[tileY][tileX]
+      if (not sprite) or (colorIndex != 3)
+        color = colors[colorIndex]
+        setPixel(data, baseIndex + tileX * 4, color)
+
+
 class Video
 
   constructor: (@ram, @context, @zoom) ->
@@ -104,19 +123,11 @@ class Video
 
   # Update imageData based on new in data structures
   updateScreen: ->
-    ###
-    For each row in grid
-      for each cell in grid
-        Perform any necessary flipping of tile data structure
-        if a sprite exists on that cell
-          get the sprite tile
-          perform any necessary flipping of tile data structure
-          get 4 24-bit sprite colors
-        Write all 64 pixels (8x8) for cell into imagePixelData
-    ###
-    for row in @grid
-      for cell in row
-        cell.tile.flip
+    for row, y in @grid
+      for cell, x in row
+        paint(@imageData.data, cell, x, y, false)
+        if cell.sprite != false
+          paint(@imageData.data, cell.sprite, x, y, true)
 
   zoom: (amount) ->
     # amount is either 1 or 4
