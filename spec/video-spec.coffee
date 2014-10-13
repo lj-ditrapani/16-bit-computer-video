@@ -100,7 +100,7 @@ test 'setGridSprites', ->
     [    3,  1,  0,  3,   7,   0]
     [  255,  0,  1,  0,  59,  38]
     [  255,  0,  1,  0,  58,  39]
-    [  255,  1,  1,  3,   0,   0]
+    [    5,  1,  1,  0,   0,   0]
   ]
   for [tile, cp1, cp2, xy, xPosition, yPosition] in tests
     cell = @video.grid[yPosition][xPosition]
