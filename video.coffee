@@ -200,6 +200,9 @@ Video.to24bitColor = (color) ->
   b24 = (b16 << 3) | (b16 >> 2)
   [r24, g24, b24]
 
+Video.gridTile2ImageDataIndex = (gridY, gridX, tileY) ->
+  (480 * 8 * gridY + 480 * tileY + 8 * gridX) * 4
+
 # RAM addresses for beginning of each video segment
 Video.TILE_INDEX = 0xEC00
 Video.GRID_CELLS = 0xF400
