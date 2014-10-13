@@ -253,38 +253,3 @@ test 'background last cell, 8 pixels in row 5', ->
   # 8 pixels of row 5 of last cell in last row
   startAddress = (39 * 8 * 60 * 8 + 5 * 60 * 8 + 59 * 8) * 4
   deepEqual @data[startAddress...(startAddress + 8 * 4)], expectedColors
-
-###
-# 16-bit Sprite color
-#  R         G       B
-# %10101   %101011  %00000
-#
-# 24-bit Sprite color
-#  R           G          B
-# %10101101   %10101110  %0000000
-#  173         174        0
-# $AD         $AE        $00
-# The 2nd and 3rd pixels are from the background tile
-# The 4th pixel is from the sprite
-# ? B B S #
-# ? R G Y #
-# Red and green come from background
-# Yello comes from sprite
-###
-###
-test 'sprite', ->
-  @video.newScreen4x()
-  expectedColors = [
-    #R     G     B     A
-    0xFF, 0x00, 0x00, 0xFF
-    0xFF, 0x00, 0x00, 0xFF
-    0x00, 0xFF, 0x00, 0xFF
-    0x00, 0xFF, 0x00, 0xFF
-    0xAD, 0xAE, 0x00, 0xFF
-    0xAD, 0xAE, 0x00, 0xFF
-  ]
-  deepEqual @data[8..31], expectedColors
-  ok false, @data[8..31].length/8
-  @ram[5..8] = [1, 2, 3, 4]
-  ok false, @ram[5..9]
-###
