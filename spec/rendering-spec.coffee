@@ -35,7 +35,8 @@ test 'background; first cell; last 8 pixels', ->
     0xFF, 0x00, 0x00, 0xFF  # Red
   ]
   # last 8 pixels of first cell in first row
-  deepEqual @data[224...255], expectedColors
+  startAddress = (60 * 8 * 7) * 4
+  deepEqual @data[startAddress...(startAddress + 8 * 4)], expectedColors
 
 test 'background; last cell; first 8 pixels & last 8 pixels', ->
   @video.update()
