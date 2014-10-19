@@ -19,8 +19,8 @@ test '16-bit to 24-bit color conversion for all colors', ->
     [[0, 0xFF, 0], [0, 0, 0xFF]]
   ]
   spriteColorPairs = [
-    [[0xFF, 0xFF, 0xFF], [0, 130, 132]]
-    [[173, 174, 0],      [132, 0, 132]]
+    [[0xFF, 0xFF, 0xFF], [0, 132, 132]]
+    [[173, 173, 0],      [132, 0, 132]]
   ]
   equal @video.cellColorPairs.length, 16
   equal @video.spriteColorPairs.length, 16
@@ -79,9 +79,9 @@ test 'setSpriteColorsAndTiles', ->
   sprites = @video.sprites
   tests = [
     # s#   color 0             color 3      tile[0][0]
-    [  0, [173, 174, 0],      [0, 130, 132], 3]  # 1 0 Yellow Cyan
+    [  0, [173, 173, 0],      [0, 132, 132], 3]  # 1 0 Yellow Cyan
     [  4, [0xFF, 0xFF, 0xFF], [132, 0, 132], 1]  # 0 1 White Magenta
-    [127, [0xFF, 0xFF, 0xFF], [0, 130, 132], 0]  # 0 0 White Cyan
+    [127, [0xFF, 0xFF, 0xFF], [0, 132, 132], 0]  # 0 0 White Cyan
   ]
   for [i, color0, color3, pixel00] in tests
     sprite = sprites[i]
@@ -119,7 +119,7 @@ test 'setGridColorsAndTiles', ->
     # x,  y   color 0             color 3       tile[0][4]
     [ 0,  0, [0x00, 0xFF, 0x00], [0xFF, 0x00, 0x00], 3]  # 1 0 Gn Rd
     [ 8,  0, [0x00, 0x00, 0x00], [0x00, 0x00, 0xFF], 0]  # 0 1 Ba Bu
-    [59, 39, [0x84, 0x86, 0x84], [0x00, 0x00, 0x00], 1]  # F A Gy Ba
+    [59, 39, [0x84, 0x84, 0x84], [0x00, 0x00, 0x00], 1]  # F A Gy Ba
   ]
   for [x, y, color0, color3, pixel04] in tests
     cell = grid[y][x]

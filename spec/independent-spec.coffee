@@ -7,14 +7,14 @@ Video specs that do not require Video spec module set-up
 
 test 'Single 16-bit color to 24-bit color conversion', ->
   inputs = [
-    parseInt('00000' + '000000' + '00000', 2) # Black
-    parseInt('11111' + '000000' + '00000', 2) # Red
-    parseInt('00000' + '111111' + '00000', 2) # Green
-    parseInt('00000' + '000000' + '11111', 2) # Blue
-    parseInt('11111' + '111111' + '11111', 2) # White
-    parseInt('00000' + '100000' + '10000', 2) # Cyan
-    parseInt('10101' + '101011' + '00000', 2) # Yellow
-    parseInt('10000' + '000000' + '10000', 2) # Magenta
+    parseInt('00000' + '00000' + '00000', 2) # Black
+    parseInt('11111' + '00000' + '00000', 2) # Red
+    parseInt('00000' + '11111' + '00000', 2) # Green
+    parseInt('00000' + '00000' + '11111', 2) # Blue
+    parseInt('11111' + '11111' + '11111', 2) # White
+    parseInt('00000' + '10000' + '10000', 2) # Cyan
+    parseInt('10101' + '10101' + '00000', 2) # Yellow
+    parseInt('10000' + '00000' + '10000', 2) # Magenta
   ]
   outputs = [
     [0, 0, 0]
@@ -22,8 +22,8 @@ test 'Single 16-bit color to 24-bit color conversion', ->
     [0, 0xFF, 0]
     [0, 0, 0xFF]
     [0xFF, 0xFF, 0xFF]
-    [0, 130, 132]
-    [173, 174, 0]
+    [0, 132, 132]
+    [173, 173, 0]
     [132, 0, 132]
   ]
   for input, i in inputs

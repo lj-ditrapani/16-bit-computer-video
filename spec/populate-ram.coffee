@@ -80,22 +80,22 @@ ljd.makeRAM = () ->
   setRAM ram, addressOfTile5, RAM_TILE4
 
   cellColors = [
-    parseInt('00000' + '000000' + '00000', 2) # Black
-    parseInt('11111' + '000000' + '00000', 2) # Red
-    parseInt('00000' + '111111' + '00000', 2) # Green
-    parseInt('00000' + '000000' + '11111', 2) # Blue
+    parseInt('00000' + '00000' + '00000', 2) # Black
+    parseInt('11111' + '00000' + '00000', 2) # Red
+    parseInt('00000' + '11111' + '00000', 2) # Green
+    parseInt('00000' + '00000' + '11111', 2) # Blue
   ]
   setRAM ram, Video.TILE_COLORS, cellColors
   lastCellColors = [
-    parseInt('10000' + '100001' + '10000', 2) # Grey
-    parseInt('11111' + '001000' + '10000', 2) # Pink
+    parseInt('10000' + '10000' + '10000', 2) # Grey
+    parseInt('11111' + '00100' + '10000', 2) # Pink
   ]
   setRAM ram, (Video.TILE_COLORS + 15 * 2), lastCellColors
   spriteColors = [
-    parseInt('11111' + '111111' + '11111', 2) # White
-    parseInt('00000' + '100000' + '10000', 2) # Cyan
-    parseInt('10101' + '101011' + '00000', 2) # Yellow
-    parseInt('10000' + '000000' + '10000', 2) # Magenta
+    parseInt('11111' + '11111' + '11111', 2) # White
+    parseInt('00000' + '10000' + '10000', 2) # Cyan
+    parseInt('10101' + '10101' + '00000', 2) # Yellow
+    parseInt('10000' + '00000' + '10000', 2) # Magenta
   ]
   setRAM ram, Video.SPRITE_COLORS, spriteColors
 
