@@ -1,7 +1,3 @@
-- Remove grid and tile arrays from constructors (test it)
-  I think they are unnecessary
-- Change 16-bit color format from 5-6-5 RGB to 15-bit 5-5-5 RGB
-- Refactor background last cell test?  Use a loop (same color x 8)?
 - Perhaps create the top-level name space to be video = {}
   instead of the Video function, so that you can more easily split
   the video.coffee file into smaller files when refactoring.
