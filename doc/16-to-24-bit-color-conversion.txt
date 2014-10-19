@@ -1,12 +1,13 @@
-Mapping 16 bit color to 24 bit color
-R:G:B (5:6:5)
+Mapping 15 bit color to 24 bit color
+R:G:B (5:5:5)
 
 
-For red and blue, copy bits 4-0 of the 5-bit color to bits 7-3 of the
-8-bit color.  Then replicate the first 3 most-significant bits of the
-5 bit color to the last 3 least-significant bits of the 8-bit color
+For each color component (red, green, blue), copy bits 4-0 of the 5-bit
+color to bits 7-3 of the 8-bit color.  Then replicate the first 3
+most-significant bits of the 5-bit color to the last 3 least-significant
+bits of the 8-bit color.
 
-5-bit color component for Red and Blue
+5-bit color component for Red, Green and Blue
 4 3 2 1 0           position
 ---------
 a b c d e           value
@@ -18,21 +19,3 @@ Resulting 8-bit transformation
 a b c d e a b c     value
 ---------------
 
-
-For green, copy bits 5-0 of the 6-bit color to bits 7-2 of the
-8-bit color.  Then replicate the first 2 most-significant bits of the
-6 bit color to the last 2 least-significant bits of the 8-bit color
-
-6-bit color component for green
-5 4 3 2 1 0         position
------------
-a b c d e f         value
------------
-
-Resulting 8-bit transformation
-7 6 5 4 3 2 1 0     position
----------------
-a b c d e f a b     value
----------------
-
-Convert all 64 colors from 16 to 24-bits a-priori
