@@ -100,8 +100,6 @@ class Video
   constructor: (@ram, @context, @zoom) ->
     @context.imageSmoothingEnabled = false
     @imageData = @context.createImageData(480, 320)
-    @tiles = []
-    @grid = []
 
   update: ->
     @updateData()
