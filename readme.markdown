@@ -10,7 +10,8 @@ Author:  Lyall Jonathan Di Trapani
 8 x 8 pixel tiles
 256 tile index
 Tile index is used for both background cells and sprites
-Colors are 16-bits with (5:6:5) RGB color format
+Colors are 15-bits with (5:5:5) RGB color format
+
 ```
 
 
@@ -114,8 +115,27 @@ Colors Pairs
 ```
 There are 2 sets of color pairs:  cell and sprite
 Each set has 32 colors arranged in 16 pairs
-16 x 2 x 16-bit colors
+16 x 2 x 15-bit colors
 4-bit color pair index
+```
+
+Colors
+------
+```
+A color occupies the 15 least-significant bits in a 16-bit value
+Colors are stored as 16-bit numbers; the most-significant bit is unused.
+
+U Unused
+R Red color component
+G Green color component
+B Blue color component
+
+Layout of a color
+
+ F E D C B A 9 8 7 6 5 4 3 2 1 0
+---------------------------------
+|U|R R R R R|G G G G G|B B B B B|
+---------------------------------
 ```
 
 
