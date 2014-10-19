@@ -201,13 +201,17 @@ class Video
         cell.xyFlip = xyFlip
 
 Video.to24bitColor = (color) ->
-  r16 = color >> 11
-  g16 = (color >> 5) & 0x3F  # 11_1111
-  b16 = color & 0x1F         #  1_1111
-  r24 = (r16 << 3) | (r16 >> 2)
-  g24 = (g16 << 2) | (g16 >> 4)
-  b24 = (b16 << 3) | (b16 >> 2)
-  [r24, g24, b24]
+  # & 31 is mask of 1_1111
+  red5 = (color >> 10) & 31
+  grn5 = (color >> 5) & 31
+  blu5 = color & 31
+  red8 = convert5bitTo8bit red5
+  grn8 = convert5bitTo8bit grn5
+  blu8 = convert5bitTo8bit blu5
+  [red8, grn8, blu8]
+
+convert5bitTo8bit = (component) ->
+  (component << 3) | (component >> 2)
 
 Video.gridTile2ImageDataIndex = (gridY, gridX, tileY) ->
   (480 * 8 * gridY + 480 * tileY + 8 * gridX) * 4
