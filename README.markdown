@@ -59,9 +59,9 @@ Sprite data:
 
                     # of bits
 ------------------------------------
-Tile index          8
 Color pair 1 (cp1)  4
 Color pair 2 (cp2)  4
+Tile index          8
 ------------------------------------
 Total              16 bits = 1 word
 
@@ -70,7 +70,7 @@ Layout of a grid cell in RAM:
 
  F E D C B A 9 8 7 6 5 4 3 2 1 0
 ---------------------------------
-|   Tile Index  |  cp1  |  cp2  |
+|  cp1  |  cp2  |  Tile Index   |
 ---------------------------------
 ```
 
@@ -89,9 +89,9 @@ Sprite data:
 
                     # of bits
 ------------------------------------
-Tile index          8
 Color pair 1 (cp1)  4
 Color pair 2 (cp2)  4
+Tile index          8
 Mirror flip x (X)   1
 Mirror flip y (Y)   1
 x position          6
@@ -105,7 +105,7 @@ Layout of a sprite across 2 RAM cells:
 
  F E D C B A 9 8 7 6 5 4 3 2 1 0       F E D C B A 9 8 7 6 5 4 3 2 1 0
 ---------------------------------     ---------------------------------
-|   Tile Index  |  cp1  |  cp2  |     |X|Y| xposition |U|U| yposition |
+|  cp1  |  cp2  |  Tile Index   |     |X|Y| xposition |U|U| yposition |
 ---------------------------------     ---------------------------------
 ```
 
