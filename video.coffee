@@ -43,9 +43,9 @@ Tile.flipY = (array) ->
 class Cell
 
   constructor: (ramCell) ->
-    @tileIndex = ramCell >> 8
-    @colorPair1 = (ramCell >> 4) & 0xF
-    @colorPair2 = ramCell & 0xF
+    @colorPair1 = ramCell >> 12
+    @colorPair2 = (ramCell >> 8) & 0xF
+    @tileIndex = ramCell & 0xFF
     @sprite = false
 
   setColors: (colorPairs) ->
