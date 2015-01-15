@@ -32,7 +32,7 @@ test 'Single 16-bit color to 24-bit color conversion', ->
 
 
 test 'Cell construction', ->
-  ramCell = (2 << 8) + (1 << 4) + 0   # Tile # 2, cp1 = 1, cp2 = 0
+  ramCell = (1 << 12) + (0 << 8) + 2      # cp1 = 1, cp2 = 0, Tile # 2
   cell = new ljd.Video.Cell(ramCell)
   equal cell.tileIndex, 2
   equal cell.colorPair1, 1

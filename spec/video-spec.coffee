@@ -42,13 +42,13 @@ test 'makeGrid', ->
   equal grid.length, 40, '40 rows'
   deepEqual [row0.length, row39.length], [60, 60], '60 columns'
   tests = [
-    [row0[0], 2, 1, 0]
-    [row0[7], 2, 0, 1]
-    [row39[59], 255, 15, 10]
+    [row0[0], 1, 0, 2]
+    [row0[7], 0, 1, 2]
+    [row39[59], 15, 10, 255]
   ]
-  for [cell, tileIndex, cp1, cp2] in tests
-    deepEqual [cell.tileIndex, cell.colorPair1, cell.colorPair2],
-              [tileIndex, cp1, cp2],
+  for [cell, cp1, cp2, tileIndex] in tests
+    deepEqual [cell.colorPair1, cell.colorPair2, cell.tileIndex],
+              [cp1, cp2, tileIndex],
               'Check individual cells'
 
 test 'makeSprites', ->
@@ -56,22 +56,24 @@ test 'makeSprites', ->
   sprites = @video.sprites
   equal sprites.length, 128, '128 sprites'
   tests = [
-    #  #   tile cp1 cp2  XY xpos ypos
-    [  0,    3,  1,  0,  0,   4,   0]
-    [  1,    3,  1,  0,  2,   5,   0]
-    [  2,    3,  1,  0,  1,   6,   0]
-    [  3,    3,  1,  0,  3,   7,   0]
-    [  4,  255,  0,  1,  0,  59,  38]
-    [  5,  255,  0,  1,  0,  58,  39]
-    [127,    0,  0,  0,  0,   0,   0]
+    #  #  cp1 cp2  tile  XY xpos ypos
+    [  0,  1,  0,    3,  0,   4,   0]
+    [  1,  1,  0,    3,  2,   5,   0]
+    [  2,  1,  0,    3,  1,   6,   0]
+    [  3,  1,  0,    3,  3,   7,   0]
+    [  4,  0,  1,  255,  0,  59,  38]
+    [  5,  0,  1,  255,  0,  58,  39]
+    [127,  0,  0,    0,  0,   0,   0]
   ]
-  for [i, tile, cp1, cp2, xy, xpos, ypos] in tests
+  for [i, cp1, cp2, tile, xy, xpos, ypos] in tests
     label = "Sprite #{i}"
     sprite = sprites[i]
-    deepEqual [sprite.tileIndex, sprite.colorPair1, sprite.colorPair2],
-              [tile, cp1, cp2], label
+    deepEqual [sprite.colorPair1, sprite.colorPair2, sprite.tileIndex],
+              [cp1, cp2, tile],
+              label
     deepEqual [sprite.xyFlip, sprite.xPosition, sprite.yPosition],
-              [xy, xpos, ypos], label
+              [xy, xpos, ypos],
+              label
     equal sprite.sprite, false, label
 
 test 'setSpriteColorsAndTiles', ->
@@ -106,10 +108,12 @@ test 'setGridSprites', ->
     cell = @video.grid[yPosition][xPosition]
     sprite = cell.sprite
     label = "Sprite @ (#{xPosition},#{yPosition})"
-    deepEqual [sprite.tileIndex, sprite.colorPair1, sprite.colorPair2],
-              [tile, cp1, cp2], label
+    deepEqual [sprite.colorPair1, sprite.colorPair2, sprite.tileIndex],
+              [cp1, cp2, tile],
+              label
     deepEqual [sprite.xyFlip, sprite.xPosition, sprite.yPosition],
-              [xy, xPosition, yPosition], label
+              [xy, xPosition, yPosition],
+              label
     equal sprite.sprite, false, label
 
 test 'setGridColorsAndTiles', ->
