@@ -51,8 +51,8 @@ RAM_TILE4 = [
 ]
 
 
-makeSprite = (tile, cp1, cp2, xy, xpos, ypos) ->
-  word1 = tile << 8 | cp1 << 4 | cp2
+makeSprite = (cp1, cp2, tile, xy, xpos, ypos) ->
+  word1 = cp1 << 12 | cp2 << 8 | tile
   word0 = xy << 14 | xpos << 8 | ypos
   [word1, word0]
 
@@ -100,36 +100,37 @@ ljd.makeRAM = () ->
   setRAM ram, Video.SPRITE_COLORS, spriteColors
 
   gridCells = [
-    #gridCell:tileIndex;colorPair1;colorPair2
-    parseInt('00000010' + '0001' + '0000', 2)
-    parseInt('00000010' + '0001' + '0000', 2)
-    parseInt('00000010' + '0001' + '0000', 2)
-    parseInt('00000010' + '0001' + '0000', 2)
-    parseInt('00000010' + '0000' + '0001', 2)
-    parseInt('00000010' + '0000' + '0001', 2)
-    parseInt('00000010' + '0000' + '0001', 2)
-    parseInt('00000010' + '0000' + '0001', 2)
-    parseInt('00000100' + '0000' + '0001', 2)
+    #gridCell:colorPair1;colorPair2;tileIndex
+    parseInt('0001' + '0000' + '00000010', 2)
+    parseInt('0001' + '0000' + '00000010', 2)
+    parseInt('0001' + '0000' + '00000010', 2)
+    parseInt('0001' + '0000' + '00000010', 2)
+    parseInt('0000' + '0001' + '00000010', 2)
+    parseInt('0000' + '0001' + '00000010', 2)
+    parseInt('0000' + '0001' + '00000010', 2)
+    parseInt('0000' + '0001' + '00000010', 2)
+    parseInt('0000' + '0001' + '00000100', 2)
   ]
   setRAM ram, Video.GRID_CELLS, gridCells
   ram[Video.GRID_CELLS + 2399] =
-    #        tile # 255   cp1=15   cp2=10
-    parseInt('11111111' + '1111' + '1010', 2)
+    #        cp1=15   cp2=10   tile # 255
+    parseInt('1111' + '1010' + '11111111', 2)
 
   ram[Video.CELL_X_Y_FLIP] = makeXYFlip(0, 2, 1, 3, 0, 0, 0, 0)
 
   spriteData = [
-    # tile cp1 cp2  XY xpos ypos
-    [    3,  1,  0,  0,   4,   0]
-    [    3,  1,  0,  2,   5,   0]
-    [    3,  1,  0,  1,   6,   0]
-    [    3,  1,  0,  3,   7,   0]
-    [  255,  0,  1,  0,  59,  38]
-    [  255,  0,  1,  0,  58,  39]
-    [    5,  1,  1,  0,   0,   0]
+    #cp1 cp2 tile XY xpos ypos
+    [  1,  0,   3, 0,   4,   0]
+    [  1,  0,   3, 2,   5,   0]
+    [  1,  0,   3, 1,   6,   0]
+    [  1,  0,   3, 3,   7,   0]
+    [  0,  1, 255, 0,  59,  38]
+    [  0,  1, 255, 0,  58,  39]
+    [  1,  1,   5, 0,   0,   0]
   ]
+
   for [tile, cp1, cp2, xy, xpos, ypos], i in spriteData
-    sprite = makeSprite(tile, cp1, cp2, xy, xpos, ypos)
+    sprite = makeSprite(cp1, cp2, tile, xy, xpos, ypos)
     setRAM ram, (Video.SPRITES + (i * 2)), sprite
 
   ram
