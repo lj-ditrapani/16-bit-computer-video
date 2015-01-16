@@ -1,6 +1,3 @@
-- Make tile index the low-order byte for grid cell and sprite
-  and the color pairs the high-order byte.
-  This will make it easier to write strings to video memory.
 - Perhaps create the top-level name space to be video = {}
   instead of the Video function, so that you can more easily split
   the video.coffee file into smaller files when refactoring.
