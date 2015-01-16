@@ -129,7 +129,7 @@ ljd.makeRAM = () ->
     [  1,  1,   5, 0,   0,   0]
   ]
 
-  for [tile, cp1, cp2, xy, xpos, ypos], i in spriteData
+  for [cp1, cp2, tile, xy, xpos, ypos], i in spriteData
     sprite = makeSprite(cp1, cp2, tile, xy, xpos, ypos)
     setRAM ram, (Video.SPRITES + (i * 2)), sprite
 
