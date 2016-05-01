@@ -2,6 +2,8 @@
 Video subsystem for LJD 16-bit computer
 =======================================
 
+This is the old design.  For the new design, see <https://github.com/lj-ditrapani/16-bit-computer-specification>.
+
 Author:  Lyall Jonathan Di Trapani
 
 ```
